@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SheetStack — PDF N-up Tool: Print 2, 4, 6 or 9 Pages on One Sheet Free</title>
+<meta name="description" content="Free PDF imposition tool. Arrange 2, 4, 6 or 9 PDF pages onto each sheet to save paper, with orientation, margin and border controls — fully in-browser.">
+<link rel="canonical" href="https://sheetstack.fixoraa.tech/">
+<meta property="og:title" content="SheetStack — PDF N-up Tool: Print 2, 4, 6 or 9 Pages on One Sheet Free">
+<meta property="og:description" content="Free PDF imposition tool. Arrange 2, 4, 6 or 9 PDF pages onto each sheet to save paper, with orientation, margin and border controls — fully in-browser.">
+<meta property="og:url" content="https://sheetstack.fixoraa.tech/">
+<meta property="og:type" content="website">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';</script>
+<style>
+:root{--pri:#9D174D;--acc:#38BDF8;--bgc:#FDF2F8}
+body{background:var(--bgc);font-family:'Segoe UI',system-ui,sans-serif}
+.pri{background:var(--pri)} .prit{color:var(--pri)}
+.btn{background:var(--pri);color:#fff;padding:.6rem 1.2rem;border-radius:.6rem;font-weight:600;cursor:pointer;border:none}
+.btn:hover{opacity:.9} .btn2{background:var(--acc);color:#111;padding:.6rem 1.2rem;border-radius:.6rem;font-weight:600;cursor:pointer;border:none}
+.btn:disabled,.btn2:disabled{opacity:.45;cursor:not-allowed}
+input,select,textarea{border:1.5px solid #cbd5e1;border-radius:.55rem;padding:.55rem .7rem;width:100%;background:#fff;color:#0f172a}
+input[type=file]{padding:.45rem .6rem} input[type=range]{padding:0} input[type=checkbox],input[type=radio]{width:auto}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--pri);border-color:transparent}
+label{font-size:.83rem;font-weight:600;display:block;margin-bottom:.3rem}
+.card{background:#fff;border-radius:1rem;box-shadow:0 8px 30px rgba(15,23,42,.08);padding:1.4rem}
+article p{margin:.7rem 0;line-height:1.75;color:#334155}
+article h2{font-size:1.45rem;font-weight:800;margin:1.6rem 0 .4rem;color:#0f172a}
+.faq{background:#fff;border-radius:.7rem;padding:.9rem 1.1rem;margin:.55rem 0;box-shadow:0 2px 10px rgba(15,23,42,.05)}
+.faq summary{font-weight:700;cursor:pointer}
+table.dt{width:100%;border-collapse:collapse} table.dt th,table.dt td{border:1px solid #e2e8f0;padding:.45rem .6rem;text-align:left;font-size:.9rem}
+table.dt th{background:#f1f5f9}
+.drop{border:2px dashed #94a3b8;border-radius:.8rem;padding:1.1rem;text-align:center;background:#f8fafc}
+canvas.prev{max-width:100%;border:1px solid #e2e8f0;border-radius:.5rem;background:#fff}
+
+</style>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "SheetStack", "url": "https://sheetstack.fixoraa.tech/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "description": "Free PDF imposition tool. Arrange 2, 4, 6 or 9 PDF pages onto each sheet to save paper, with orientation, margin and border controls \u2014 fully in-browser."}</script>
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "What does n-up mean?", "acceptedAnswer": {"@type": "Answer", "text": "N-up (or imposition) places N document pages onto each printed sheet \u2014 2, 4, 6 or 9 here \u2014 shrinking each page to fit its cell. It cuts paper and toner while keeping pages in order."}}, {"@type": "Question", "name": "Will text stay sharp in the stacked PDF?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. SheetStack embeds the original pages and scales them as vectors rather than rendering pictures of them, so text remains crisp and selectable at the new size."}}, {"@type": "Question", "name": "Which density should I choose?", "acceptedAnswer": {"@type": "Answer", "text": "2-up for comfortable reading and drafts, 4-up for handouts (the sweet spot), 6-up or 9-up for reference grids, slide sheets and proofs you scan rather than study line by line."}}, {"@type": "Question", "name": "Does the sheet size matter if I print at home?", "acceptedAnswer": {"@type": "Answer", "text": "Yes \u2014 build for the paper you will load (A4 or Letter, portrait or landscape) so the printer does not rescale your layout a second time and shrink pages further."}}, {"@type": "Question", "name": "Can I control reading order across the sheet?", "acceptedAnswer": {"@type": "Answer", "text": "Yes. Fill direction chooses row-wise (across, then down) or column-wise (down, then across) placement, and page order within each sheet follows your choice."}}, {"@type": "Question", "name": "Is my document uploaded anywhere?", "acceptedAnswer": {"@type": "Answer", "text": "No. Imposition runs entirely in your browser; your PDF never leaves your device and nothing is stored."}}]}</script>
+</head>
+<body id="top">
+<header class="sticky top-0 z-40 shadow-md" style="background:#500724">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="#top" class="text-xl font-extrabold tracking-tight" style="color:#FDF2F8">▦ SheetStack</a>
+    <nav class="flex gap-5 text-sm font-semibold" style="color:#FDF2F8">
+      <a href="#top" class="hover:underline">Home</a>
+      <a href="https://fixoraa.tech" class="hover:underline">More Tools</a>
+    </nav>
+  </div>
+</header>
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pt-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <div class="origin-top scale-[0.44] sm:scale-100 shrink-0">
+        <script>
+          atOptions = { 'key' : '4e68ac77881c17fe128a46565d9a4e8c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://www.highrevenueformat.com/4e68ac77881c17fe128a46565d9a4e8c/invoke.js"></script>
+      </div>
+    </div>
+  </div>
+</div>
+<main class="mx-auto max-w-6xl px-4 sm:px-6 py-8">
+  <div class="text-center mb-6">
+    <h1 class="text-3xl sm:text-4xl font-extrabold" style="color:#0f172a">PDF N-up — Multiple Pages Per Sheet</h1>
+    <p class="mt-2 text-slate-600 max-w-2xl mx-auto">Handouts, drafts and study notes do not need one sheet per page. SheetStack imposes 2, 4, 6 or 9 pages onto every sheet — cutting paper, toner and bulk while keeping every page legible and in order.</p>
+    <span class="inline-block mt-3 px-3 py-1 rounded-full text-xs font-bold text-white pri">✓ Unlimited Free Usage — No Signup, No Watermark</span>
+    <p class="mt-2 text-xs text-slate-500">🔒 100% private: your file is processed entirely in your browser and never uploaded to any server.</p>
+  </div>
+  <div class="grid md:grid-cols-5 gap-6">
+  <div class="card md:col-span-2 space-y-3">
+    <div class="drop"><label>Your PDF</label><input id="file" type="file" accept="application/pdf"></div>
+    <div class="grid grid-cols-2 gap-3"><div><label>Pages per sheet</label><select id="nup"><option value="2">2</option><option value="4" selected>4</option><option value="6">6</option><option value="9">9</option></select></div>
+    <div><label>Sheet</label><select id="sheet"><option value="a4p">A4 portrait</option><option value="a4l">A4 landscape</option><option value="letp">Letter portrait</option><option value="letl">Letter landscape</option></select></div></div>
+    <div class="grid grid-cols-2 gap-3"><div><label>Outer margin (pt)</label><input id="om" type="number" value="24"></div><div><label>Gap between pages (pt)</label><input id="gap" type="number" value="12"></div></div>
+    <div><label><input type="checkbox" id="bord" checked> Draw a light border around each page</label></div>
+    <div><label>Fill direction</label><select id="dir"><option value="row">Across, then down</option><option value="col">Down, then across</option></select></div>
+    <button class="btn w-full" id="go" onclick="run()">Build N-up PDF</button>
+    <button class="btn2 w-full" id="dl" style="display:none">⬇ Download stacked PDF</button>
+    <p id="status" class="text-sm font-semibold"></p>
+  </div>
+  <div class="card md:col-span-3">
+    <div class="grid grid-cols-3 gap-3 text-center"><div class="p-3 rounded-lg bg-pink-50"><div class="text-xs font-bold">SOURCE PAGES</div><div id="oSrc" class="text-xl font-extrabold">–</div></div><div class="p-3 rounded-lg bg-pink-50"><div class="text-xs font-bold">SHEETS OUT</div><div id="oOut" class="text-xl font-extrabold">–</div></div><div class="p-3 rounded-lg bg-sky-50"><div class="text-xs font-bold">PAPER SAVED</div><div id="oSave" class="text-xl font-extrabold">–</div></div></div>
+    <div id="note" class="mt-4 text-sm text-slate-600">Rule of thumb: 2-up suits large-print drafts, 4-up is the handout sweet spot, 6-up and 9-up are for reference grids, storyboards and proof sheets where you scan rather than study.</div>
+  </div></div>
+</main>
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pb-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <script async src="https://js.wpadmngr.com/static/adManager.js" data-admpid="464498"></script>
+    </div>
+  </div>
+</div>
+<section class="mx-auto max-w-4xl px-4 sm:px-6 pb-6">
+  <article>
+  <h2>Printing less without reading less</h2>
+<p>A surprising share of printing is ceremony: single pages centred on large sheets, mostly air, because the file said so. N-up imposition breaks that habit by placing several document pages on each physical sheet at a reduced but legible size. A forty-page draft becomes ten sheets at 4-up; a lecture's slides become a compact handout students can annotate; a storyboard or catalogue proof fits on a desk instead of a wall. The savings are not only paper — toner, storage, postage weight and the sheer bulk of a course pack all shrink together.</p>
+<p>SheetStack performs the imposition on the PDF itself, which matters more than it first appears. Printer-driver n-up works too, but its result evaporates at the print dialog: the next person, the next printer, the print shop across town all get the original one-up file. An imposed PDF carries the layout with it — anyone who prints it, anywhere, gets your stacked sheets exactly as designed.</p>
+<h2>Choosing 2, 4, 6 or 9 per sheet</h2>
+<p>Legibility decides. At 2-up, each page sits at roughly seventy percent of full size — comfortable for sustained reading, ideal for large-print drafts and side-by-side comparison of versions. At 4-up, pages land near half size: the handout sweet spot, where normal text remains readable and a whole chapter fits in a staple's reach. Teachers, trainers and conference organisers live at 4-up for good reason.</p>
+<p>Six and nine per sheet change the job from reading to surveying. Text becomes reference-sized — fine for slide grids, thumbnail proofs, contact sheets of a document's pages, and study decks where you already know the material and need it visible at a glance. Rule of thumb: if your readers must study the words, stop at 4; if they must find and recognise pages, 6 and 9 are your friends. SheetStack shows the paper saving for whichever you choose, so the trade is always explicit.</p>
+<h2>Orientation, direction and the geometry of a sheet</h2>
+<p>Match sheet orientation to the pages: landscape sheets flatter landscape slides in even grids, portrait sheets suit portrait documents at 2-up and 6-up. The grid is computed honestly — margins and gaps come off the sheet first, then each page is scaled to fit its cell without distortion, centred, optionally framed with a light border that makes cutting guides and cell boundaries obvious on proof prints.</p>
+<p>Fill direction is the control most tools hide. 'Across, then down' reads like a book page and suits narrative documents. 'Down, then across' fills columns first, which some readers prefer for slide grids and which keeps consecutive slides in the same column on tall grids. Neither is correct in the abstract — pick the one your readers' eyes expect, and stay consistent across a course pack or a report series so the pattern never needs relearning.</p>
+<h2>How to build an n-up PDF, step by step</h2>
+<p>Load your PDF, choose pages per sheet, and pick the sheet size and orientation your printer will actually use — A4 for most of the world, Letter in North America, portrait unless your pages are slides. Set an outer margin your printer can honour; most home printers need at least a few millimetres of unprintable edge, and the default keeps you safely inside it. Decide on borders — on for proofs and cutting, off for polished handouts — and on fill direction.</p>
+<p>Press Build and check the arithmetic: source pages, sheets out, paper saved. Download the imposed file and print one test sheet before a long run; thirty seconds with a physical page confirms legibility at your chosen density better than any screen preview. Because the output is an ordinary PDF, you can also impose first and compress afterwards, or number pages before imposing — the tools compose in whatever order your workflow needs.</p>
+<h2>Where n-up quietly pays for itself</h2>
+<p>Training and education are the obvious economies: a semester of weekly handouts at 4-up uses a quarter of the paper budget, and students carry a folder instead of a crate. Draft review is the second: editors and engineers mark up imposed proofs at their desks, reserving full-size prints for final checks. Mail and logistics feel it too — an imposed catalogue or report can slip under a postage weight band that the one-up version busts, saving money on every single copy sent.</p>
+<p>There is an environmental line item as well, and it is not decorative. Paper is the dominant footprint of most office printing; cutting sheets by half to three-quarters, across every draft and handout, is one of the few green measures that also saves money immediately and asks nothing of anyone's behaviour beyond choosing a density once. Sustainability that survives contact with a budget usually looks exactly like this.</p>
+<h2>Privacy and practical notes</h2>
+<p>Imposition rearranges your document's pages — for reports, manuals and course materials, content you may not want on third-party servers before release. SheetStack works inside your browser: the source PDF is read locally, the stacked output is generated in your tab's memory, and nothing is uploaded or retained. Unreleased drafts stay unreleased.</p>
+<p>A practical note on quality: n-up here is true vector imposition — pages are embedded and scaled, not photographed — so text stays sharp at its new size and the output remains a proper, selectable-text PDF. Fine print has a floor, of course: a footnote that was small at full size is tiny at 9-up. Test-print one sheet, as advised, and let your eyes arbitrate the density.</p>
+<h2>Test-print discipline and duplex pairing</h2>
+<p>Always print one sheet before a run: hold it at reading distance in the room's actual light, because densities that look fine on a bright monitor can disappoint on paper. If you print imposed files double-sided, remember the output is already stacked — duplex settings only mirror the sheets, and short-edge versus long-edge flipping decides whether backs land upright, so run the first sheet both ways if your printer is new to you. Store the imposed file beside the original with its density in the name — 'handout-4up' — so the next print run skips the setup entirely. And when a course or team shares handouts, standardise on one density for the whole series: readers build a mental map of the format once, and every subsequent week reuses it for free.</p>
+  <h2>Frequently Asked Questions</h2>
+  <details class="faq"><summary>What does n-up mean?</summary><p>N-up (or imposition) places N document pages onto each printed sheet — 2, 4, 6 or 9 here — shrinking each page to fit its cell. It cuts paper and toner while keeping pages in order.</p></details>
+<details class="faq"><summary>Will text stay sharp in the stacked PDF?</summary><p>Yes. SheetStack embeds the original pages and scales them as vectors rather than rendering pictures of them, so text remains crisp and selectable at the new size.</p></details>
+<details class="faq"><summary>Which density should I choose?</summary><p>2-up for comfortable reading and drafts, 4-up for handouts (the sweet spot), 6-up or 9-up for reference grids, slide sheets and proofs you scan rather than study line by line.</p></details>
+<details class="faq"><summary>Does the sheet size matter if I print at home?</summary><p>Yes — build for the paper you will load (A4 or Letter, portrait or landscape) so the printer does not rescale your layout a second time and shrink pages further.</p></details>
+<details class="faq"><summary>Can I control reading order across the sheet?</summary><p>Yes. Fill direction chooses row-wise (across, then down) or column-wise (down, then across) placement, and page order within each sheet follows your choice.</p></details>
+<details class="faq"><summary>Is my document uploaded anywhere?</summary><p>No. Imposition runs entirely in your browser; your PDF never leaves your device and nothing is stored.</p></details>
+  </article>
+</section>
+<footer class="mt-6 py-8" style="background:#500724;color:#FDF2F8">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 text-center text-sm">
+    <p class="font-bold text-base">SheetStack</p>
+    <p class="opacity-80 mt-1">Free PDF imposition tool. Arrange 2, 4, 6 or 9 PDF pages onto each sheet to save paper, with orientation, margin and border controls — fully in-browser.</p>
+    <p class="mt-2"><a href="#top" class="underline">Home</a> · <a href="https://fixoraa.tech" class="underline">More Tools</a></p>
+    <p class="fx-credit" style="text-align:center;font-size:12.5px;opacity:.62;margin:10px auto 2px;letter-spacing:.01em">Made by <a href="https://fixoraa.tech" target="_blank" rel="noopener" style="color:inherit;font-weight:700;text-decoration:underline;text-underline-offset:2px">Fixoraa</a></p>
+  </div>
+</footer>
+<script id="lib-sheetstack">
+
+function gridFor(n){ if(n===2) return {cols:2,rows:1}; if(n===4) return {cols:2,rows:2}; if(n===6) return {cols:2,rows:3}; if(n===9) return {cols:3,rows:3}; return {cols:1,rows:1}; }
+function sheetsNeeded(pages, n){ return Math.ceil(pages/n); }
+if (typeof module!=="undefined") module.exports={gridFor:gridFor, sheetsNeeded:sheetsNeeded};
+
+</script>
+<script>
+
+const $=id=>document.getElementById(id);
+function fmtBytes(b){if(b===0)return '0 B';const k=1024,s=['B','KB','MB','GB'];const i=Math.floor(Math.log(b)/Math.log(k));return (b/Math.pow(k,i)).toFixed(i?1:0)+' '+s[i];}
+function setStatus(m,ok){const el=$('status');if(!el)return;el.textContent=m;el.style.color=ok===false?'#dc2626':'inherit';}
+function download(bytes,name,type){const blob=bytes instanceof Blob?bytes:new Blob([bytes],{type:type||'application/pdf'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},800);}
+async function readFile(input){const f=input.files&&input.files[0];if(!f)throw new Error('Please choose a PDF file first.');return {file:f,buf:await f.arrayBuffer()};}
+function showDl(id,bytes,name){const b=$(id);b.style.display='inline-block';b.onclick=()=>download(bytes,name);}
+
+
+async function run(){
+  const btn=$('go'); btn.disabled=true;
+  try{
+    const {file,buf}=await readFile($('file'));
+    const src=await PDFLib.PDFDocument.load(buf.slice(0));
+    const n=parseInt($('nup').value); const {cols,rows}=gridFor(n);
+    const dims={a4p:[595.28,841.89],a4l:[841.89,595.28],letp:[612,792],letl:[792,612]}[$('sheet').value];
+    const [W,H]=dims; const om=parseFloat($('om').value)||0, gap=parseFloat($('gap').value)||0;
+    const out=await PDFLib.PDFDocument.create();
+    const embedded=await out.embedPdf(await src.save());
+    const total=src.getPageCount(); const sheets=sheetsNeeded(total,n);
+    const cw=(W-om*2-gap*(cols-1))/cols, ch=(H-om*2-gap*(rows-1))/rows;
+    for(let s=0;s<sheets;s++){
+      const sheet=out.addPage([W,H]);
+      for(let k=0;k<n;k++){
+        const ix=s*n+k; if(ix>=total) break;
+          let cell;
+        if($('dir').value==='row'){ cell={c:k%cols,r:Math.floor(k/cols)}; } else { cell={c:Math.floor(k/rows),r:k%rows}; }
+        const ep=embedded[ix]; const sc=Math.min(cw/ep.width,ch/ep.height);
+        const dw=ep.width*sc, dh=ep.height*sc;
+        const x=om+cell.c*(cw+gap)+(cw-dw)/2;
+        const yTop=om+cell.r*(ch+gap); const y=H-yTop-dh-(ch-dh)/2*0 - (ch-dh)/2 + (ch-dh)/2; // centre vertically in cell
+        const yy=H-(om+cell.r*(ch+gap))- ( (ch-dh)/2 ) - dh;
+        if($('bord').checked){ sheet.drawRectangle({x:om+cell.c*(cw+gap),y:H-(om+cell.r*(ch+gap))-ch,width:cw,height:ch,borderColor:PDFLib.rgb(0.78,0.78,0.78),borderWidth:0.6}); }
+        sheet.drawPage(ep,{x:x,y:yy,width:dw,height:dh});
+      }
+      setStatus('Building sheet '+(s+1)+' of '+sheets+'…');
+    }
+    const bytes=await out.save();
+    $('oSrc').textContent=total; $('oOut').textContent=sheets; $('oSave').textContent=Math.round((1-sheets/total)*100)+'%';
+    showDl('dl',bytes,file.name.replace(/\.pdf$/i,'')+'-'+n+'up.pdf');
+    setStatus('Done ✔ '+total+' pages imposed onto '+sheets+' sheets.');
+  }catch(e){ setStatus('⚠ '+(e.message||e),false); }
+  btn.disabled=false;
+}
+
+</script>
+</body>
+</html>
